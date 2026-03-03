@@ -48,8 +48,8 @@ def generate_html_report():
     chosen_days = random_working_days(working_days, max_count=4)
 
     # Câmpuri Data/Ora – lansare și trimitere rămân libere pentru completare manuală
-    lansare_date = "________________"
-    trimitere_date = "________________"
+    lansare_date = ""
+    trimitere_date = ""
     # Data Ora Sosire = ultima zi aleasă
     sosire_date = chosen_days[-1].strftime("%d/%m/%Y")
 
@@ -152,11 +152,11 @@ def generate_html_report():
                         </tr>
                         <tr>
                             <td class="left"><strong>Telefon</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Fax</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Tip</strong></td>
@@ -164,7 +164,7 @@ def generate_html_report():
                         </tr>
                         <tr>
                             <td class="left"><strong>Nr Contr.</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Defecte Sesizate</strong></td>
@@ -192,11 +192,11 @@ def generate_html_report():
                         </tr>
                         <tr>
                             <td class="left"><strong>Valoare Abonament</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Anunta</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                     </table>
                 </td>
@@ -249,11 +249,11 @@ def generate_html_report():
                     <table border="0" width="100%">
                         <tr>
                             <td width="40%" class="left"><strong>Inginer Service</strong></td>
-                            <td width="60%" class="normal">________________</td>
+                            <td width="60%" class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Marca</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                     </table>
                 </td>
@@ -261,11 +261,11 @@ def generate_html_report():
                     <table border="0" width="100%">
                         <tr>
                             <td width="50%" class="left"><strong>Confirmare Client Nume</strong></td>
-                            <td width="50%" class="normal">________________</td>
+                            <td width="50%" class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>L.S.</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                     </table>
                 </td>
