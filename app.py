@@ -145,11 +145,11 @@ def generate_html_report():
                         </tr>
                         <tr>
                             <td class="left"><strong>Telefon</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Fax</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Tip</strong></td>
@@ -157,7 +157,7 @@ def generate_html_report():
                         </tr>
                         <tr>
                             <td class="left"><strong>Nr Contr.</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Defecte Sesizate</strong></td>
@@ -173,27 +173,27 @@ def generate_html_report():
                         </tr>
                         <tr>
                             <td class="left"><strong>Data</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Ora</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Lansare</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Data</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Trimitere</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Data</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Sosire</strong></td>
@@ -201,11 +201,11 @@ def generate_html_report():
                         </tr>
                         <tr>
                             <td class="left"><strong>Valoare Abonament</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Anunta</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                     </table>
                 </td>
@@ -256,11 +256,11 @@ def generate_html_report():
                     <table border="0" width="100%">
                         <tr>
                             <td width="40%" class="left"><strong>Inginer Service</strong></td>
-                            <td width="60%" class="normal">________________</td>
+                            <td width="60%" class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Marca</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                     </table>
                 </td>
@@ -268,11 +268,11 @@ def generate_html_report():
                     <table border="0" width="100%">
                         <tr>
                             <td width="50%" class="left"><strong>Confirmare Client Nume</strong></td>
-                            <td width="50%" class="normal">________________</td>
+                            <td width="50%" class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>L.S.</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                     </table>
                 </td>
