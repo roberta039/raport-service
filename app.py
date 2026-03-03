@@ -3,26 +3,24 @@ import datetime
 import calendar
 import random
 
-# ------------------------------------------------------------
-# 1. Funcții helper – date & zile lucrătoare random
-# ------------------------------------------------------------
+# -----------------------------
+# Configurări fixe (le poți schimba)
+# -----------------------------
 ROMANIAN_MONTHS = {
-    1: "Ianuarie",
-    2: "Februarie",
-    3: "Martie",
-    4: "Aprilie",
-    5: "Mai",
-    6: "Iunie",
-    7: "Iulie",
-    8: "August",
-    9: "Septembrie",
-    10: "Octombrie",
-    11: "Noiembrie",
-    12: "Decembrie"
+    1: "Ianuarie", 2: "Februarie", 3: "Martie", 4: "Aprilie", 5: "Mai", 6: "Iunie",
+    7: "Iulie", 8: "August", 9: "Septembrie", 10: "Octombrie", 11: "Noiembrie", 12: "Decembrie"
 }
 
+COMPANY_NAME = "S.C. CREATIVE WEBDEV S.R.L."
+COMPANY_ADDRESS = "SOSEAUA GIURGIULUI NR. 113-115, BL. O, SC. 1, ET. 2, AP.10, SECTOR 4, BUCURESTI - Romania"
+CLIENT_NAME = "SC Inkorporate SRL"
+CLIENT_STREET = "Str. Esarfei 64-66"
+CLIENT_CITY = "Bucuresti"
+
+# -----------------------------
+# Funcții pentru zile lucrătoare
+# -----------------------------
 def working_days_of_month(year: int, month: int) -> list[datetime.date]:
-    """Returnează lista de zile lucrătoare (luni–vineri) pentru o lună/an."""
     days = []
     for day in range(1, calendar.monthrange(year, month)[1] + 1):
         dt = datetime.date(year, month, day)
@@ -31,48 +29,30 @@ def working_days_of_month(year: int, month: int) -> list[datetime.date]:
     return days
 
 def random_working_days(days: list[datetime.date], max_count: int = 4) -> list[datetime.date]:
-    """Alege până la max_count zile lucrătoare random și le sortează."""
     if len(days) <= max_count:
         return sorted(days)
     return sorted(random.sample(days, max_count))
 
-# ------------------------------------------------------------
-# 2. Generare HTML raport
-# ------------------------------------------------------------
-def generate_html_report(
-    company_name: str,
-    company_address: str,
-    client_name: str,
-    client_street: str,
-    client_city: str,
-    selected_interventions: list[str],
-    report_month_year: str,
-    report_dates: list[datetime.date],
-    last_date_str: str
-):
-    # Linii „Defecte constatate” – câte un rând pentru fiecare zi aleasă
-    defect_lines = "<br>".join(
-        f"{d.day:02d}/{d.month:02d}/{d.year} - Verificare si intretinere retea de calculatoare."
-        for d in report_dates
-    )
+# -----------------------------
+# Generare HTML raport (după modelul tău)
+# -----------------------------
+def generate_html_report():
+    # Luna trecută din anul curent
+    today = datetime.date.today()
+    first_day_this_month = today.replace(day=1)
+    last_month_date = first_day_this_month - datetime.timedelta(days=1)
+    year = last_month_date.year
+    month = last_month_date.month
+    report_month_year = f"{ROMANIAN_MONTHS[month]} {year}"
 
-    # Tabel simplificat „Tip intervenție / Rezultat / Cauza”
-    interventions = [
-        "Garantie", "Constatare", "Revizie", "Instalare", "Reinstalare",
-        "Mutare", "Incasare", "Rutina", "Programare", "Reprogramare"
-    ]
-    rows = ""
-    for it in interventions:
-        checked = "☑" if it in selected_interventions else "□"
-        result = "Rezolvata" if it in selected_interventions else ""
-        cause = "Lipsa componente" if it not in selected_interventions else ""
-        rows += f"""
-        <tr>
-            <td width="40%">{it}</td>
-            <td width="20%" align="center">{checked}</td>
-            <td width="40%" align="center">{result or cause}</td>
-        </tr>
-        """
+    # Zile lucrătoare random (max 4) + ultima zi = data sosirii
+    working_days = working_days_of_month(year, month)
+    chosen_days = random_working_days(working_days, max_count=4)
+    last_date_str = chosen_days[-1].strftime("%d/%m/%Y")
+
+    defect_lines = ""
+    for d in chosen_days:
+        defect_lines += f"{d.day:02d}/{d.month:02d}/{d.year} - Verificare si intretinere retea de calculatoare.<br>"
 
     html = f"""
     <!DOCTYPE html>
@@ -85,8 +65,16 @@ def generate_html_report(
             margin: 20px;
             font-size: 10pt;
         }}
-        .center {{ text-align: center; }}
-        .left   {{ text-align: left; }}
+        .center {{
+            text-align: center;
+            font-weight: bold;
+        }}
+        .left {{
+            text-align: left;
+        }}
+        .normal {{
+            font-weight: normal;
+        }}
         table {{
             border-collapse: collapse;
             width: 100%;
@@ -114,192 +102,202 @@ def generate_html_report(
     </style>
     </head>
     <body>
+        <!-- Date firmă (sus, stânga) -->
+        <div class="left">
+            <strong>{COMPANY_NAME}</strong><br/>
+            {COMPANY_ADDRESS}
+        </div>
+        <br/>
 
-    <!-- Date firmă – aliniate la stânga -->
-    <div class="left">
-        <strong>{company_name}</strong><br/>
-        {company_address}
-    </div>
+        <!-- Titlu -->
+        <div class="center" style="font-size: 18pt; margin-bottom: 10px;">
+            SESIZARE/RAPORT DE SERVICE
+        </div>
 
-    <h1 class="center">SESIZARE/RAPORT DE SERVICE</h1>
+        <!-- Tabel principal 2 coloane -->
+        <table>
+            <tr>
+                <td width="50%" style="vertical-align: top;">
+                    <table border="0" width="100%">
+                        <tr>
+                            <td width="30%" class="left"><strong>Produs</strong></td>
+                            <td width="70%" class="normal">Revizie</td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Beneficiar</strong></td>
+                            <td class="normal">{CLIENT_NAME}</td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Serie</strong></td>
+                            <td class="normal"></td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Eticheta</strong></td>
+                            <td class="normal"></td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Adresa</strong></td>
+                            <td class="normal">{CLIENT_STREET}</td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Localitate</strong></td>
+                            <td class="normal">{CLIENT_CITY}</td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Telefon</strong></td>
+                            <td class="normal">________________</td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Fax</strong></td>
+                            <td class="normal">________________</td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Tip</strong></td>
+                            <td class="normal"></td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Nr Contr.</strong></td>
+                            <td class="normal">________________</td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Defecte Sesizate</strong></td>
+                            <td class="normal"></td>
+                        </tr>
+                    </table>
+                </td>
+                <td width="50%" style="vertical-align: top;">
+                    <table border="0" width="100%">
+                        <tr>
+                            <td width="30%" class="left"><strong>Luna</strong></td>
+                            <td width="70%" class="normal">{report_month_year}</td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Data</strong></td>
+                            <td class="normal">________________</td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Ora</strong></td>
+                            <td class="normal">________________</td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Lansare</strong></td>
+                            <td class="normal">________________</td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Data</strong></td>
+                            <td class="normal">________________</td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Trimitere</strong></td>
+                            <td class="normal">________________</td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Data</strong></td>
+                            <td class="normal">________________</td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Sosire</strong></td>
+                            <td class="normal">{last_date_str}</td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Valoare Abonament</strong></td>
+                            <td class="normal">________________</td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Anunta</strong></td>
+                            <td class="normal">________________</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
 
-    <!-- 2 corpuri sub titlu -->
-    <table>
-        <tr>
-            <td width="50%">
-                <strong>Produs</strong><br/>
-                Revizie<br/><br/>
+        <!-- Defecte constatate -->
+        <br/>
+        <div class="center" style="margin-bottom: 5px;">
+            Defecte Constatate
+        </div>
+        <table border="1" width="100%">
+            <tr>
+                <td width="30%" class="center"><strong>Defecte Constatate</strong></td>
+                <td width="70%" class="normal">{defect_lines}</td>
+            </tr>
+        </table>
 
-                <strong>Beneficiar</strong><br/>
-                {client_name}<br/><br/>
+        <!-- Tip interventie / Rezultat / Cauza nerezolvarii (variantă simplificată) -->
+        <br/>
+        <div class="center" style="margin-bottom: 5px;">
+            Tip Interventie / Rezultat / Cauza Nerezolvarii
+        </div>
+        <table border="1" width="100%">
+            <tr>
+                <th width="25%">Tip Interventie</th>
+                <th width="15%">Selectat</th>
+                <th width="25%">Rezultat</th>
+                <th width="35%">Cauza Nerezolvarii</th>
+            </tr>
+            <tr><td class="left">Garantie</td><td class="center">☐</td><td class="center">Rezolvata</td><td></td></tr>
+            <tr><td class="left">Constatare</td><td class="center">☐</td><td class="center">Rezolvata</td><td></td></tr>
+            <tr><td class="left">Revizie</td><td class="center">☐</td><td class="center">Rezolvata</td><td></td></tr>
+            <tr><td class="left">Instalare</td><td class="center">☐</td><td class="center">Rezolvata</td><td></td></tr>
+            <tr><td class="left">Reinstalare</td><td class="center">☐</td><td class="center">Rezolvata</td><td></td></tr>
+            <tr><td class="left">Mutare</td><td class="center">☐</td><td class="center">Rezolvata</td><td></td></tr>
+            <tr><td class="left">Incasare</td><td class="center">☐</td><td class="center">Rezolvata</td><td></td></tr>
+            <tr><td class="left">Rutina</td><td class="center">☐</td><td class="center">Rezolvata</td><td></td></tr>
+            <tr><td class="left">Programare</td><td class="center">☐</td><td class="center">Rezolvata</td><td></td></tr>
+            <tr><td class="left">Reprogramare</td><td class="center">☐</td><td class="center">Rezolvata</td><td></td></tr>
+        </table>
 
-                <strong>Eticheta / Serie</strong><br/>
-                {client_name}<br/><br/>
+        <!-- Inginer service / Confirmare client -->
+        <br/>
+        <table>
+            <tr>
+                <td width="50%" style="vertical-align: top;">
+                    <table border="0" width="100%">
+                        <tr>
+                            <td width="40%" class="left"><strong>Inginer Service</strong></td>
+                            <td width="60%" class="normal">________________</td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Marca</strong></td>
+                            <td class="normal">________________</td>
+                        </tr>
+                    </table>
+                </td>
+                <td width="50%" style="vertical-align: top;">
+                    <table border="0" width="100%">
+                        <tr>
+                            <td width="50%" class="left"><strong>Confirmare Client Nume</strong></td>
+                            <td width="50%" class="normal">________________</td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>L.S.</strong></td>
+                            <td class="normal">________________</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
 
-                <strong>Adresa</strong><br/>
-                {client_street}<br/><br/>
-
-                <strong>Localitate</strong><br/>
-                {client_city}<br/><br/>
-
-                <strong>Telefon</strong><br/>
-                ________________<br/><br/>
-
-                <strong>NrContr.</strong><br/>
-                ________________<br/><br/>
-
-                <strong>Defecte sesizate</strong><br/>
-                ___________________________<br/>
-                ___________________________<br/>
-            </td>
-            <td width="50%">
-                <strong>Luna</strong><br/>
-                {report_month_year}<br/><br/>
-
-                <strong>Data</strong><br/>
-                {last_date_str}<br/><br/>
-
-                <strong>Ora</strong><br/>
-                ________________<br/><br/>
-
-                <strong>Lansare</strong><br/>
-                ________________<br/><br/>
-
-                <strong>Trimitere</strong><br/>
-                ________________<br/><br/>
-
-                <strong>Sosire</strong><br/>
-                {last_date_str}<br/><br/>
-
-                <strong>Valoare Abonament</strong><br/>
-                ________________<br/><br/>
-
-                <strong>Anunta</strong><br/>
-                ________________<br/>
-            </td>
-        </tr>
-    </table>
-
-    <!-- Defecte constatate -->
-    <h2 class="center">Defecte constatate</h2>
-    <table>
-        <tr>
-            <td width="100%">
-                {defect_lines}
-            </td>
-        </tr>
-    </table>
-
-    <!-- Tip interventie / Rezultat / Cauza nerezolvarii -->
-    <h2 class="center">Tip interventie / Rezultat / Cauza nerezolvarii</h2>
-    <table>
-        <tr>
-            <th width="40%">Tip interventie</th>
-            <th width="20%">Selectat</th>
-            <th width="40%">Rezultat / Cauza</th>
-        </tr>
-        {rows}
-    </table>
-
-    <!-- Inginer service / Confirmare client -->
-    <table>
-        <tr>
-            <td width="50%">
-                <strong>Inginer service</strong><br/>
-                ________________<br/><br/>
-
-                <strong>Marca</strong><br/>
-                ________________
-            </td>
-            <td width="50%">
-                <strong>Confirmare client nume</strong><br/>
-                ________________<br/><br/>
-
-                <strong>L.S.</strong><br/>
-                ________________
-            </td>
-        </tr>
-    </table>
-
-    <!-- Buton de print în HTML (va dispărea la tipărire) -->
-    <button class="print-btn" onclick="window.print()">Print Report</button>
-
+        <!-- Buton de print (dispare la tipărire) -->
+        <button class="print-btn" onclick="window.print()">Print Report</button>
     </body>
     </html>
     """
     return html
 
-# ------------------------------------------------------------
-# 3. UI Streamlit
-# ------------------------------------------------------------
-st.title("Raport de Service – Pagina web (fără PDF)")
-
-st.write(
-    "Aplicația generează raportul direct în pagină ca HTML. "
-    "Poți tipări din browser sau cu butonul de print."
+# -----------------------------
+# Configurare pagină – ascunde meniuri, sidebar etc.
+# -----------------------------
+st.set_page_config(
+    page_title="Raport de Service",
+    layout="wide",
+    initial_sidebar_state="collapsed",
+    menu_items=None
 )
 
-with st.form("report_form"):
-    # Date firmă
-    company_name = st.text_input(
-        "Denumire firmă (sus stânga)",
-        value="S.C. CREATIVE WEBDEV S.R.L."
-    )
-    company_address = st.text_input(
-        "Adresă firmă",
-        value="SOSEAUA GIURGIULUI NR. 113-115, BL. O, SC. 1, ET. 2, AP.10, SECTOR 4, BUCURESTI - Romania"
-    )
-
-    # Beneficiar
-    client_name = st.text_input("Beneficiar", value="SC Inkorporate SRL")
-    client_street = st.text_input("Adresă beneficiar", value="Str. Esarfei 64-66")
-    client_city = st.text_input("Localitate", value="Bucuresti")
-
-    # Tipuri de intervenție
-    interventions_options = [
-        "Garantie", "Constatare", "Revizie", "Instalare", "Reinstalare",
-        "Mutare", "Incasare", "Rutina", "Programare", "Reprogramare"
-    ]
-    selected_interventions = st.multiselect(
-        "Selectează tipurile de intervenţie efectuate",
-        options=interventions_options,
-        default=["Revizie"]
-    )
-
-    submitted = st.form_submit_button("Generează raportul")
-
-if submitted:
-    # Luna trecută
-    today = datetime.date.today()
-    first_day_this_month = today.replace(day=1)
-    last_month_date = first_day_this_month - datetime.timedelta(days=1)
-    year = last_month_date.year
-    month = last_month_date.month
-    report_month_year = f"{ROMANIAN_MONTHS[month]} {year}"
-
-    # Zile lucrătoare & selecție random (max 4)
-    working_days = working_days_of_month(year, month)
-    chosen_days = random_working_days(working_days, max_count=4)
-
-    last_date_str = chosen_days[-1].strftime("%d/%m/%Y")
-
-    # Generează HTML raport
-    html_report = generate_html_report(
-        company_name=company_name,
-        company_address=company_address,
-        client_name=client_name,
-        client_street=client_street,
-        client_city=client_city,
-        selected_interventions=selected_interventions,
-        report_month_year=report_month_year,
-        report_dates=chosen_days,
-        last_date_str=last_date_str
-    )
-
-    # Afișează raportul ca pagină HTML în Streamlit
-    st.components.v1.html(html_report, height=900, scrolling=True)
-
-    st.info(
-        "Raportul este generat ca pagină web. "
-        "Poți folosi butonul 'Print Report' din raport sau comanda Ctrl+P din browser pentru tipărire."
-    )
+# -----------------------------
+# Afișează DOAR raportul generat
+# -----------------------------
+report_html = generate_html_report()
+st.components.v1.html(report_html, height=900, scrolling=True)
