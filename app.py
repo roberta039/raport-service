@@ -185,7 +185,7 @@ def generate_html_report():
                         </tr>
                         <tr>
                             <td class="left"><strong>Data</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Trimitere</strong></td>
