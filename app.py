@@ -172,17 +172,17 @@ def generate_html_report():
                             <td width="70%" class="normal">{report_month_year}</td>
                         </tr>
                        <tr>
-    <td class="left"><strong>Data Ora Lansare</strong></td>
-    <td class="normal">{lansare_formatted}</td>
-</tr>
-<tr>
-    <td class="left"><strong>Data Ora Trimitere</strong></td>
-    <td class="normal">{trimitere_formatted}</td>
-</tr>
-<tr>
-    <td class="left"><strong>Data Ora Sosire</strong></td>
-    <td class="normal">{sosire_formatted}</td>
-</tr>
+                    <td class="left"><strong>Data Ora Lansare</strong></td>
+                    <td class="normal">{lansare_formatted}</td>
+                </tr>
+                <tr>
+                    <td class="left"><strong>Data Ora Trimitere</strong></td>
+                    <td class="normal">{trimitere_formatted}</td>
+                </tr>
+                <tr>
+                    <td class="left"><strong>Data Ora Sosire</strong></td>
+                    <td class="normal">{sosire_formatted}</td>
+                </tr>
                         <tr>
                             <td class="left"><strong>Data</strong></td>
                             <td class="normal"></td>
