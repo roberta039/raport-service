@@ -10,9 +10,7 @@ ROMANIAN_MONTHS = {
 }
 
 COMPANY_NAME = "S.C. CREATIVE WEBDEV S.R.L."
-COMPANY_ADDRESS_street = "SOSEAUA GIURGIULUI NR. 113-115,"
-COMPANY_ADDRESS_2 = "BL. O, SC. 1, ET. 2, AP.10,"
-COMPANY_ADDRESS_3 = "SECTOR 4, BUCURESTI - Romania"
+COMPANY_ADDRESS = "SOSEAUA GIURGIULUI NR. 113-115, BL. O, SC. 1, ET. 2, AP.10, SECTOR 4, BUCURESTI - Romania"
 CLIENT_NAME = "SC Inkorporate SRL"
 CLIENT_STREET = "Str. Esarfei 64-66"
 CLIENT_CITY = "Bucuresti"
@@ -117,9 +115,7 @@ def generate_html_report():
         <!-- Date firmă (sus, stânga) -->
         <div class="left">
             <strong>{COMPANY_NAME}</strong><br/>
-            {COMPANY_ADDRESS_1}
-            {COMPANY_ADDRESS_2}
-            {COMPANY_ADDRESS_3}
+            {COMPANY_ADDRESS}
         </div>
         <br/>
 
