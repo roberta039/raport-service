@@ -245,39 +245,43 @@ def generate_html_report():
         <br>
         <table border="1" width="100%">
             <tr>
-                <!-- Col 1: Tip Interventie -->
-                <td width="33%" style="vertical-align: top; padding: 0; margin: 0;">
-                    <div class="center" style="margin-bottom: 5px;">Tip Interventie</div>
-                    <table border="1" width="100%">
-                        <tr>
-                            <th colspan="10">Tip Interventie</th>
-                        </tr>
-                        <tr>
-                            <td width="10%">Garantie</td>
-                            <td width="10%">Constatare</td>
-                            <td width="10%">Revizie</td>
-                            <td width="10%">Instalare</td>
-                            <td width="10%">Reinstalare</td>
-                            <td width="10%">Mutare</td>
-                            <td width="10%">Incasare</td>
-                            <td width="10%">Rutina</td>
-                            <td width="10%">Programare</td>
-                            <td width="10%">Reprogramare</td>
-                        </tr>
-                        <tr>
-                            <td class="center">☐</td>
-                            <td class="center">☐</td>
-                            <td class="center">☐</td>
-                            <td class="center">☐</td>
-                            <td class="center">☐</td>
-                            <td class="center">☐</td>
-                            <td class="center">☐</td>
-                            <td class="center">☐</td>
-                            <td class="center">☐</td>
-                            <td class="center">☐</td>
-                        </tr>
-                    </table>
-                </td>
+                <!-- Tabel Tip Interventie: cap de tabel + opțiuni una sub alta -->
+<br>
+<table border="1" width="30%">
+    <tr>
+        <th class="center">Tip Interventie</th>
+    </tr>
+    <tr>
+        <td>☐ Garantie</td>
+    </tr>
+    <tr>
+        <td>☐ Constatare</td>
+    </tr>
+    <tr>
+        <td>☐ Revizie</td>
+    </tr>
+    <tr>
+        <td>☐ Instalare</td>
+    </tr>
+    <tr>
+        <td>☐ Reinstalare</td>
+    </tr>
+    <tr>
+        <td>☐ Mutare</td>
+    </tr>
+    <tr>
+        <td>☐ Incasare</td>
+    </tr>
+    <tr>
+        <td>☐ Rutina</td>
+    </tr>
+    <tr>
+        <td>☐ Programare</td>
+    </tr>
+    <tr>
+        <td>☐ Reprogramare</td>
+    </tr>
+</table>
 
                 <!-- Col 2: Rezultat -->
                 <td width="33%" style="vertical-align: top; padding: 0; margin: 0;">
