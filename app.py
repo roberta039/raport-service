@@ -245,101 +245,62 @@ def generate_html_report():
         <br>
         <table border="1" width="100%">
             <tr>
-                <!-- Tabel Tip Interventie: cap de tabel + opțiuni una sub alta -->
+               <!-- Tabel cu 3 coloane: Tip Interventie, Rezultat, Cauza Nerezolvarii (3 corpuri) -->
 <br>
-<table border="1" width="30%">
+<table border="1" width="100%">
     <tr>
-        <th class="center">Tip Interventie</th>
-    </tr>
-    <tr>
-        <td>☐ Garantie</td>
-    </tr>
-    <tr>
-        <td>☐ Constatare</td>
-    </tr>
-    <tr>
-        <td>☐ Revizie</td>
-    </tr>
-    <tr>
-        <td>☐ Instalare</td>
-    </tr>
-    <tr>
-        <td>☐ Reinstalare</td>
-    </tr>
-    <tr>
-        <td>☐ Mutare</td>
-    </tr>
-    <tr>
-        <td>☐ Incasare</td>
-    </tr>
-    <tr>
-        <td>☐ Rutina</td>
-    </tr>
-    <tr>
-        <td>☐ Programare</td>
-    </tr>
-    <tr>
-        <td>☐ Reprogramare</td>
+        <!-- Corp stânga: Tip Interventie -->
+        <td width="33%" style="vertical-align: top; padding: 0; margin: 0;">
+            <table border="1" width="100%">
+                <tr>
+                    <th class="center">Tip Interventie</th>
+                </tr>
+                <tr><td>☐ Garantie</td></tr>
+                <tr><td>☐ Constatare</td></tr>
+                <tr><td>☐ Revizie</td></tr>
+                <tr><td>☐ Instalare</td></tr>
+                <tr><td>☐ Reinstalare</td></tr>
+                <tr><td>☐ Mutare</td></tr>
+                <tr><td>☐ Incasare</td></tr>
+                <tr><td>☐ Rutina</td></tr>
+                <tr><td>☐ Programare</td></tr>
+                <tr><td>☐ Reprogramare</td></tr>
+            </table>
+        </td>
+
+        <!-- Corp mijloc: Rezultat -->
+        <td width="33%" style="vertical-align: top; padding: 0; margin: 0;">
+            <table border="1" width="100%">
+                <tr>
+                    <th class="center">Rezultat</th>
+                </tr>
+                <tr><td>☐ Rezolvata</td></tr>
+                <tr><td>☐ Rezolvata Partial</td></tr>
+                <tr><td>☐ Nerezolvata</td></tr>
+                <tr><td>☐ Preluare Echipament</td></tr>
+                <tr><td>☐ Fara Accesorii</td></tr>
+                <tr><td>☐ Cu Accesorii</td></tr>
+                <tr><td>☐ Furnizat echipament back-up</td></tr>
+            </table>
+        </td>
+
+        <!-- Corp dreapta: Cauza Nerezolvarii -->
+        <td width="33%" style="vertical-align: top; padding: 0; margin: 0;">
+            <table border="1" width="100%">
+                <tr>
+                    <th class="center">Cauza Nerezolvarii</th>
+                </tr>
+                <tr><td>☐ Lipsa Componente</td></tr>
+                <tr><td>☐ Insatisfactie Client</td></tr>
+                <tr><td>☐ Piese luate la reparat</td></tr>
+                <tr><td>☐ Lipsa acces Produs</td></tr>
+                <tr><td>☐ Terminat Programul</td></tr>
+                <tr><td>☐ Refuz Cumparare</td></tr>
+                <tr><td>☐ Linie Telefonica defecta</td></tr>
+            </table>
+        </td>
     </tr>
 </table>
-
-                <!-- Col 2: Rezultat -->
-                <td width="33%" style="vertical-align: top; padding: 0; margin: 0;">
-                    <div class="center" style="margin-bottom: 5px;">Rezultat</div>
-                    <table border="1" width="100%">
-                        <tr>
-                            <th colspan="7">Rezultat</th>
-                        </tr>
-                        <tr>
-                            <td width="14%">Rezolvata</td>
-                            <td width="14%">Rezolvata Partial</td>
-                            <td width="14%">Nerezolvata</td>
-                            <td width="14%">Preluare Echipament</td>
-                            <td width="14%">Fara Accesorii</td>
-                            <td width="14%">Cu Accesorii</td>
-                            <td width="14%">Furnizat echipament back-up</td>
-                        </tr>
-                        <tr>
-                            <td class="center">☐</td>
-                            <td class="center">☐</td>
-                            <td class="center">☐</td>
-                            <td class="center">☐</td>
-                            <td class="center">☐</td>
-                            <td class="center">☐</td>
-                            <td class="center">☐</td>
-                        </tr>
-                    </table>
-                </td>
-
-                <!-- Col 3: Cauza Nerezolvarii -->
-                <td width="33%" style="vertical-align: top; padding: 0; margin: 0;">
-                    <div class="center" style="margin-bottom: 5px;">Cauza Nerezolvarii</div>
-                    <table border="1" width="100%">
-                        <tr>
-                            <th colspan="7">Cauza Nerezolvarii</th>
-                        </tr>
-                        <tr>
-                            <td width="14%">Lipsa Componente</td>
-                            <td width="14%">Insatisfactie Client</td>
-                            <td width="14%">Piese luate la reparat</td>
-                            <td width="14%">Lipsa acces Produs</td>
-                            <td width="14%">Terminat Programul</td>
-                            <td width="14%">Refuz Cumparare</td>
-                            <td width="14%">Linie Telefonica defecta</td>
-                        </tr>
-                        <tr>
-                            <td class="center">☐</td>
-                            <td class="center">☐</td>
-                            <td class="center">☐</td>
-                            <td class="center">☐</td>
-                            <td class="center">☐</td>
-                            <td class="center">☐</td>
-                            <td class="center">☐</td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-        </table>
 
         <!-- Corp mic pentru Model/Obs. și S/N -->
         <br>
