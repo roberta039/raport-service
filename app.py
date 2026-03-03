@@ -2,6 +2,7 @@ import datetime
 import random
 from fpdf import FPDF
 import streamlit as st
+from io import BytesIO
 
 # -----------------------
 # 1. Funcții de dată
@@ -66,13 +67,8 @@ def alege_zile_random(weeks_dict, max_zile=4):
 
 def genereaza_pdf(an: int, luna: int, zile_selectate):
     """
-    Creează PDF-ul raportului într-un format apropiat de model:
-    - antet firmă
-    - titlu SESIZARE/RAPORT DE SERVICE
-    - Luna: <NumeLuna><An>
-    - tabel cu "Defecte constatate" + Data
-    - câmp "Sosire" = ultima zi din lista selectată
-    Returnează bytes (pentru download).
+    Creează PDF-ul raportului și returnează bytes pentru download.
+    Compatibil cu Streamlit (st.download_button).
     """
     luna_str = f"{nume_luna_ro(luna)}{an}"
 
@@ -96,13 +92,12 @@ def genereaza_pdf(an: int, luna: int, zile_selectate):
     pdf.cell(0, 7, f"Luna: {luna_str}", ln=1, align="L")
     pdf.ln(3)
 
-    # Tabel simplificat "Defecte constatate"
+    # Tabel "Defecte constatate"
     pdf.set_font("Arial", size=10)
     col1_w = pdf.w * 0.6
     col2_w = pdf.w * 0.3
-    th = 8  # înălțime rând
+    th = 8
 
-    # header tabel
     pdf.set_font("Arial", "B", 10)
     pdf.cell(col1_w, th, "Defecte constatate", border=1, align="C")
     pdf.cell(col2_w, th, "Data", border=1, ln=1, align="C")
@@ -113,21 +108,23 @@ def genereaza_pdf(an: int, luna: int, zile_selectate):
         pdf.cell(col2_w, th, "-", border=1, ln=1, align="C")
     else:
         for d in zile_selectate:
-            # descriere generică, după modelul tău:
             descriere = "Verificare si intretinere retea de calculatoare."
             pdf.cell(col1_w, th, descriere, border=1, align="L")
             pdf.cell(col2_w, th, d.strftime("%d/%m/%Y"), border=1, ln=1, align="C")
 
     pdf.ln(5)
 
-    # Câmp "Sosire" = ultima zi din listă (dacă există)
+    # "Sosire" = ultima zi selectată
     if zile_selectate:
         ultima = max(zile_selectate)
         pdf.set_font("Arial", size=10)
         pdf.cell(0, 6, f"Sosire: {ultima.strftime('%d/%m/%Y')}", ln=1, align="R")
 
-    # Returnează PDF ca bytes (compatibil cu fpdf2)
-    return pdf.output(dest="S")
+    # Scriem PDF în buffer binar și returnăm bytes
+    pdf_buffer = BytesIO()
+    pdf.output(pdf_buffer)   # scrie conținutul PDF în buffer
+    pdf_buffer.seek(0)       # mutăm cursorul la început
+    return pdf_buffer.getvalue()
 
 # -----------------------
 # 3. Aplicația Streamlit
