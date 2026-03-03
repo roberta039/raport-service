@@ -126,8 +126,8 @@ def genereaza_pdf(an: int, luna: int, zile_selectate):
         pdf.set_font("Arial", size=10)
         pdf.cell(0, 6, f"Sosire: {ultima.strftime('%d/%m/%Y')}", ln=1, align="R")
 
-    # Returnează PDF ca bytes
-    return pdf.output(dest="S").encode("latin1")
+    # Returnează PDF ca bytes (compatibil cu fpdf2)
+    return pdf.output(dest="S")
 
 # -----------------------
 # 3. Aplicația Streamlit
