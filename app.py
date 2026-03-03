@@ -53,8 +53,6 @@ def alege_zile_random(weeks_dict, max_zile=4):
         zile_sapt = weeks_dict[idx]
         if zile_sapt:
             selected.append(random.choice(zile_sapt))
-    # dacă sunt mai puțin de 4 săptămâni lucrătoare în luna respectivă,
-    # se poate întâmpla să ai sub 4 zile; asta respectă cerința „maxim 4”.
     return selected
 
 # -------------------------------------------------
@@ -86,28 +84,27 @@ def genereaza_pdf(an: int, luna: int, zile_selectate):
     # --------------------
     # Titlu SESIZARE/RAPORT DE SERVICE
     # --------------------
-    pdf.set_font("Arial", "B", 14)
+    pdf.set_font("Arial", "B", size=14)
     pdf.cell(0, 8, "***SESIZARE/RAPORT DE SERVICE***", ln=1, align="C")
     pdf.ln(3)
 
     # --------------------
-    # Bloc date generale (în spiritul tabelului din model)
+    # Bloc date generale
     # --------------------
     pdf.set_font("Arial", size=10)
 
-    # vom face linii tip: Label (bold) | Valoare | spațiu liber (pentru seamăn cu tabelul cu multe coloane)
     col_label = 40
     col_value = 70
     col_extra = pdf.w - left_margin - right_margin - col_label - col_value
 
     def row3(label_bold, value="", extra=""):
-        pdf.set_font("Arial", "B", 10)
+        pdf.set_font("Arial", "B", size=10)
         pdf.cell(col_label, 6, label_bold, border=1)
-        pdf.set_font("Arial", 10)
+        pdf.set_font("Arial", size=10)
         pdf.cell(col_value, 6, value, border=1)
         pdf.cell(col_extra, 6, extra, border=1, ln=1)
 
-    # câmpuri, conform modelului tău, cu valorile tale de exemplu
+    # câmpuri, conform modelului
     row3("Produs", "Revizie", "")
     row3("Beneficiar", "SC Inkorporate SRL", "")
     row3("Adresa", "Str. Esarfei 64-66", "")
@@ -120,61 +117,60 @@ def genereaza_pdf(an: int, luna: int, zile_selectate):
 
     # câmpuri temporale
     luna_str = f"{nume_luna_ro(luna)}{an}"
-    data_lansare = ""  # poți completa dacă vrei să generezi automat
+    data_lansare = ""
     ora_lansare = ""
     data_trimitere = ""
     ora_trimitere = ""
     data_sosire = max(zile_selectate).strftime("%d/%m/%Y") if zile_selectate else ""
     ora_sosire = ""
 
-    # linie specială pentru „Luna / Data / Ora”
-    # facem un rând cu trei sub-câmpuri
-    pdf.set_font("Arial", "B", 10)
+    # linie „Luna / Data / Ora”
+    pdf.set_font("Arial", "B", size=10)
     pdf.cell(col_label, 6, "Luna", border=1)
-    pdf.set_font("Arial", 10)
+    pdf.set_font("Arial", size=10)
     pdf.cell(40, 6, luna_str, border=1)
-    pdf.set_font("Arial", "B", 10)
+    pdf.set_font("Arial", "B", size=10)
     pdf.cell(20, 6, "Data", border=1)
-    pdf.set_font("Arial", 10)
+    pdf.set_font("Arial", size=10)
     pdf.cell(25, 6, "", border=1)
-    pdf.set_font("Arial", "B", 10)
+    pdf.set_font("Arial", "B", size=10)
     pdf.cell(15, 6, "Ora", border=1)
-    pdf.set_font("Arial", 10)
+    pdf.set_font("Arial", size=10)
     rest_width = pdf.w - left_margin - right_margin - col_label - 40 - 20 - 25 - 15
     pdf.cell(rest_width, 6, "", border=1, ln=1)
 
-    # Linia „Lansare Data/Ora”
-    pdf.set_font("Arial", "B", 10)
+    # „Lansare”
+    pdf.set_font("Arial", "B", size=10)
     pdf.cell(col_label, 6, "Lansare", border=1)
-    pdf.set_font("Arial", 10)
+    pdf.set_font("Arial", size=10)
     pdf.cell(40, 6, data_lansare, border=1)
-    pdf.set_font("Arial", "B", 10)
+    pdf.set_font("Arial", "B", size=10)
     pdf.cell(20, 6, "Ora", border=1)
-    pdf.set_font("Arial", 10)
+    pdf.set_font("Arial", size=10)
     pdf.cell(25, 6, ora_lansare, border=1)
     pdf.cell(15, 6, "", border=1)
     pdf.cell(rest_width, 6, "", border=1, ln=1)
 
-    # Linia „Trimitere Data/Ora”
-    pdf.set_font("Arial", "B", 10)
+    # „Trimitere”
+    pdf.set_font("Arial", "B", size=10)
     pdf.cell(col_label, 6, "Trimitere", border=1)
-    pdf.set_font("Arial", 10)
+    pdf.set_font("Arial", size=10)
     pdf.cell(40, 6, data_trimitere, border=1)
-    pdf.set_font("Arial", "B", 10)
+    pdf.set_font("Arial", "B", size=10)
     pdf.cell(20, 6, "Ora", border=1)
-    pdf.set_font("Arial", 10)
+    pdf.set_font("Arial", size=10)
     pdf.cell(25, 6, ora_trimitere, border=1)
     pdf.cell(15, 6, "", border=1)
     pdf.cell(rest_width, 6, "", border=1, ln=1)
 
-    # Linia „Sosire Data/Ora”
-    pdf.set_font("Arial", "B", 10)
+    # „Sosire”
+    pdf.set_font("Arial", "B", size=10)
     pdf.cell(col_label, 6, "Sosire", border=1)
-    pdf.set_font("Arial", 10)
+    pdf.set_font("Arial", size=10)
     pdf.cell(40, 6, data_sosire, border=1)
-    pdf.set_font("Arial", "B", 10)
+    pdf.set_font("Arial", "B", size=10)
     pdf.cell(20, 6, "Ora", border=1)
-    pdf.set_font("Arial", 10)
+    pdf.set_font("Arial", size=10)
     pdf.cell(25, 6, ora_sosire, border=1)
     pdf.cell(15, 6, "", border=1)
     pdf.cell(rest_width, 6, "", border=1, ln=1)
@@ -183,20 +179,18 @@ def genereaza_pdf(an: int, luna: int, zile_selectate):
 
     # --------------------
     # Tabel „Defecte Constatate”
-    # (exact ca în model: 1 col „Defecte Constatate”, 4 rânduri cu date+descriere)
     # --------------------
     table_width = pdf.w - left_margin - right_margin
-    pdf.set_font("Arial", "B", 10)
+    pdf.set_font("Arial", "B", size=10)
     pdf.cell(50, 7, "Defecte Constatate", border=1)
     pdf.cell(table_width - 50, 7, "", border=1, ln=1)
 
-    pdf.set_font("Arial", 10)
+    pdf.set_font("Arial", size=10)
     descriere = "Verificare si intretinere retea de calculatoare."
 
-    # în model sunt 4 rânduri; dacă avem mai puțin de 4 zile, completăm doar câte avem
     zile_sortate = sorted(zile_selectate)
     for i in range(4):
-        pdf.cell(50, 6, "" if i > 0 else "", border=1)  # prima linie are header-ul în model, dar aici îl lăsăm gol ca în rândurile 2-4
+        pdf.cell(50, 6, "" if i > 0 else "", border=1)
         if i < len(zile_sortate):
             text = f"{zile_sortate[i].strftime('%d/%m/%Y')} - {descriere}"
         else:
@@ -207,11 +201,9 @@ def genereaza_pdf(an: int, luna: int, zile_selectate):
 
     # --------------------
     # Tabel „Tip Interventie / Rezultat / ...”
-    # după structura din model (tip, X-uri, cauze etc.)
     # --------------------
-    pdf.set_font("Arial", "B", 10)
+    pdf.set_font("Arial", "B", size=10)
 
-    # Lățimi de coloană aproximate după model (ajustate la lățimea paginii)
     col_t_interv = 35
     col_x1 = 10
     col_x2 = 10
@@ -220,7 +212,11 @@ def genereaza_pdf(an: int, luna: int, zile_selectate):
     col_rezultat = 45
     col_cauza = 30
     col_nerez = 30
-    total_w = col_t_interv + col_x1 + col_x2 + col_text_lung + col_x3 + col_rezultat + col_cauza + col_nerez
+    total_w = (
+        col_t_interv + col_x1 + col_x2 +
+        col_text_lung + col_x3 +
+        col_rezultat + col_cauza + col_nerez
+    )
     max_w = pdf.w - left_margin - right_margin
     if total_w > max_w:
         factor = max_w / total_w
@@ -233,7 +229,6 @@ def genereaza_pdf(an: int, luna: int, zile_selectate):
         col_cauza = int(col_cauza * factor)
         col_nerez = int(col_nerez * factor)
 
-    # Header principal: Tip Interventie / Rezultat / Cauza / Nerezolvarii
     pdf.cell(col_t_interv, 7, "***Tip Interventie***", border=1)
     pdf.cell(col_x1, 7, "", border=1)
     pdf.cell(col_x2, 7, "", border=1)
@@ -243,9 +238,8 @@ def genereaza_pdf(an: int, luna: int, zile_selectate):
     pdf.cell(col_cauza, 7, "***Cauza***", border=1)
     pdf.cell(col_nerez, 7, "***Nerezolvarii***", border=1, ln=1)
 
-    pdf.set_font("Arial", 10)
+    pdf.set_font("Arial", size=10)
 
-    # Rânduri, după modelul textului tău (fără să încercăm să desenăm exact toate X-urile, dar păstrând structura):
     randuri = [
         ("Garantie", "", "", "", "", "Rezolvata", "", "Lipsa Componente"),
         ("Constatare", "", "", "", "", "", "", "Insatisfactie Client"),
@@ -271,9 +265,12 @@ def genereaza_pdf(an: int, luna: int, zile_selectate):
         pdf.cell(col_nerez, 6, nerez, border=1, ln=1)
 
     pdf.ln(8)
-    pdf.cell(0, 6, "Service: __________________    Marca: __________________    L.S.: __________________", ln=1, align="C")
+    pdf.cell(
+        0, 6,
+        "Service: __________________    Marca: __________________    L.S.: __________________",
+        ln=1, align="C"
+    )
 
-    # Returnează bytes pentru Streamlit
     pdf_buffer = BytesIO()
     pdf.output(pdf_buffer)
     pdf_buffer.seek(0)
