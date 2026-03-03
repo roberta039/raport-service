@@ -10,10 +10,14 @@ ROMANIAN_MONTHS = {
 }
 
 COMPANY_NAME = "S.C. CREATIVE WEBDEV S.R.L."
-COMPANY_ADDRESS = "SOSEAUA GIURGIULUI NR. 113-115, BL. O, SC. 1, ET. 2, AP.10, SECTOR 4, BUCURESTI - Romania"
+COMPANY_ADDRESS = (
+    "SOSEAUA GIURGIULUI NR. 113-115, BL. O, SC. 1, ET. 2, AP.10, "
+    "SECTOR 4, BUCURESTI - Romania"
+)
 CLIENT_NAME = "SC Inkorporate SRL"
 CLIENT_STREET = "Str. Esarfei 64-66"
 CLIENT_CITY = "Bucuresti"
+
 
 # Funcții ajutătoare
 def working_days_of_month(year, month):
@@ -25,11 +29,13 @@ def working_days_of_month(year, month):
             days.append(dt)
     return days
 
+
 def random_working_days(days, max_count=4):
     """Selectează aleator până la max_count zile lucrătoare și le sortează."""
     if len(days) <= max_count:
         return sorted(days)
     return sorted(random.sample(days, max_count))
+
 
 # Generare raport HTML
 def generate_html_report():
@@ -47,22 +53,22 @@ def generate_html_report():
     working_days = working_days_of_month(year, month)
     chosen_days = random_working_days(working_days, max_count=4)
 
-    # Câmpuri Data/Ora – lansare și trimitere rămân libere pentru completare manuală
-    lansare_date = "________________"
-    trimitere_date = "________________"
-    # Data Ora Sosire = ultima zi aleasă
+    # Data Ora Sosire = ultima zi aleasă (ora se completează manual)
     sosire_date = chosen_days[-1].strftime("%d/%m/%Y")
 
-    # Blocul "Defecte Constatate" – rând pentru fiecare zi + mult spațiu liber
+    # Blocul "Defecte Constatate" – rând pentru fiecare zi
     defect_lines = ""
     for d in chosen_days:
-        defect_lines += f"{d.day:02d}/{d.month:02d}/{d.year} - Verificare si intretinere retea de calculatoare.<br>"
+        defect_lines += (
+            f"{d.day:02d}/{d.month:02d}/{d.year} - "
+            f"Verificare si intretinere retea de calculatoare.<br>"
+        )
 
-    # Spațiu suplimentar pentru completare manuală la "Defecte constatate"
+    # Spațiu suplimentar pentru completare manuală la "Defecte Constatate"
     defect_lines += "<br>" * 15
 
-    # Spațiu pentru blocul "Defecte Sesizate"
-    defect_sesizate_space = "<br>" * 8  # poți mări sau micșora numărul
+    # Spațiu pentru blocul "Defecte Sesizate" (fără date pre-completate)
+    defect_sesizate_space = "<br>" * 8
 
     html = f"""
     <!DOCTYPE html>
@@ -127,6 +133,7 @@ def generate_html_report():
         <!-- Tabel principal 2 coloane -->
         <table>
             <tr>
+                <!-- Coloana stânga: date beneficiar / produs -->
                 <td width="50%" style="vertical-align: top;">
                     <table border="0" width="100%">
                         <tr>
@@ -171,6 +178,8 @@ def generate_html_report():
                         </tr>
                     </table>
                 </td>
+
+                <!-- Coloana dreapta: luna, date/ora, abonament -->
                 <td width="50%" style="vertical-align: top;">
                     <table border="0" width="100%">
                         <tr>
@@ -179,11 +188,11 @@ def generate_html_report():
                         </tr>
                         <tr>
                             <td class="left"><strong>Data Ora Lansare</strong></td>
-                            <td class="normal">{lansare_date}</td>
+                            <td class="normal">________________</td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Data Ora Trimitere</strong></td>
-                            <td class="normal">{trimitere_date}</td>
+                            <td class="normal">________________</td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Data Ora Sosire</strong></td>
@@ -202,20 +211,21 @@ def generate_html_report():
             </tr>
         </table>
 
-        <!-- Bloc Defecte Sesizate -->
+        <!-- Bloc Defecte Sesizate (același layout ca Defecte Constatate, dar gol) -->
         <br/>
         <div class="center" style="margin-bottom: 5px;">
             Defecte Sesizate
         </div>
         <table border="1" width="100%">
             <tr>
-                <td width="100%" class="normal">
+                <td width="30%" class="center"><strong>Defecte Sesizate</strong></td>
+                <td width="70%" class="normal">
                     {defect_sesizate_space}
                 </td>
             </tr>
         </table>
 
-        <!-- Defecte Constatate cu spațiu liber -->
+        <!-- Bloc Defecte Constatate cu date + spațiu liber -->
         <br/>
         <div class="center" style="margin-bottom: 5px;">
             Defecte Constatate
@@ -291,12 +301,13 @@ def generate_html_report():
     """
     return html
 
+
 # Configurare pagină Streamlit
 st.set_page_config(
     page_title="Raport de Service",
     layout="wide",
     initial_sidebar_state="collapsed",
-    menu_items=None
+    menu_items=None,
 )
 
 # Afișare raport direct, fără alt text/butoane Streamlit
