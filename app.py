@@ -145,11 +145,11 @@ def generate_html_report():
                         </tr>
                         <tr>
                             <td class="left"><strong>Telefon</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Fax</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Tip</strong></td>
@@ -157,7 +157,7 @@ def generate_html_report():
                         </tr>
                         <tr>
                             <td class="left"><strong>Nr Contr.</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Defecte Sesizate</strong></td>
@@ -173,15 +173,15 @@ def generate_html_report():
                         </tr>
                         <tr>
                             <td class="left"><strong>Data</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Ora</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Lansare</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Data</strong></td>
@@ -189,11 +189,11 @@ def generate_html_report():
                         </tr>
                         <tr>
                             <td class="left"><strong>Trimitere</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Data</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Sosire</strong></td>
@@ -201,11 +201,11 @@ def generate_html_report():
                         </tr>
                         <tr>
                             <td class="left"><strong>Valoare Abonament</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Anunta</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal"></td>
                         </tr>
                     </table>
                 </td>
