@@ -3,7 +3,9 @@ import datetime
 import calendar
 import random
 
-# Configurări fixe
+# -----------------------------
+# Configurări fixe (le poți schimba)
+# -----------------------------
 ROMANIAN_MONTHS = {
     1: "Ianuarie", 2: "Februarie", 3: "Martie", 4: "Aprilie", 5: "Mai", 6: "Iunie",
     7: "Iulie", 8: "August", 9: "Septembrie", 10: "Octombrie", 11: "Noiembrie", 12: "Decembrie"
@@ -15,27 +17,27 @@ CLIENT_NAME = "SC Inkorporate SRL"
 CLIENT_STREET = "Str. Esarfei 64-66"
 CLIENT_CITY = "Bucuresti"
 
-# Funcții ajutătoare
-def working_days_of_month(year, month):
-    """Returnează lista de zile lucrătoare (luni-vineri) pentru o lună specifică."""
+# -----------------------------
+# Funcții pentru zile lucrătoare
+# -----------------------------
+def working_days_of_month(year: int, month: int) -> list[datetime.date]:
     days = []
     for day in range(1, calendar.monthrange(year, month)[1] + 1):
         dt = datetime.date(year, month, day)
-        if dt.weekday() < 5:  # 0-4 = luni-vineri
+        if dt.weekday() < 5:  # 0–4 = luni–vineri
             days.append(dt)
     return days
 
-def random_working_days(days, max_count=4):
-    """Selectează aleator până la max_count zile lucrătoare și le sortează."""
+def random_working_days(days: list[datetime.date], max_count: int = 4) -> list[datetime.date]:
     if len(days) <= max_count:
         return sorted(days)
     return sorted(random.sample(days, max_count))
 
-# Generare raport HTML
+# -----------------------------
+# Generare HTML raport (după modelul tău)
+# -----------------------------
 def generate_html_report():
-    """Generează raportul HTML conform modelului dorit."""
-
-    # Luna trecută
+    # Luna trecută din anul curent
     today = datetime.date.today()
     first_day_this_month = today.replace(day=1)
     last_month_date = first_day_this_month - datetime.timedelta(days=1)
@@ -43,23 +45,14 @@ def generate_html_report():
     month = last_month_date.month
     report_month_year = f"{ROMANIAN_MONTHS[month]} {year}"
 
-    # Zile lucrătoare alese aleator (max 4)
+    # Zile lucrătoare random (max 4) + ultima zi = data sosirii
     working_days = working_days_of_month(year, month)
     chosen_days = random_working_days(working_days, max_count=4)
+    last_date_str = chosen_days[-1].strftime("%d/%m/%Y")
 
-    # Câmpuri Data/Ora – lansare și trimitere rămân libere pentru completare manuală
-    lansare_date = ""
-    trimitere_date = ""
-    # Data Ora Sosire = ultima zi aleasă
-    sosire_date = chosen_days[-1].strftime("%d/%m/%Y")
-
-    # Blocul "Defecte Constatate" – rând pentru fiecare zi + mult spațiu liber
     defect_lines = ""
     for d in chosen_days:
         defect_lines += f"{d.day:02d}/{d.month:02d}/{d.year} - Verificare si intretinere retea de calculatoare.<br>"
-
-    # Spațiu suplimentar pentru completare manuală
-    defect_lines += "<br>" * 15  # ajustează numărul dacă vrei mai mult/mai puțin spațiu
 
     html = f"""
     <!DOCTYPE html>
@@ -152,11 +145,11 @@ def generate_html_report():
                         </tr>
                         <tr>
                             <td class="left"><strong>Telefon</strong></td>
-                            <td class="normal"></td>
+                            <td class="normal">________________</td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Fax</strong></td>
-                            <td class="normal"></td>
+                            <td class="normal">________________</td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Tip</strong></td>
@@ -164,7 +157,7 @@ def generate_html_report():
                         </tr>
                         <tr>
                             <td class="left"><strong>Nr Contr.</strong></td>
-                            <td class="normal"></td>
+                            <td class="normal">________________</td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Defecte Sesizate</strong></td>
@@ -179,31 +172,47 @@ def generate_html_report():
                             <td width="70%" class="normal">{report_month_year}</td>
                         </tr>
                         <tr>
-                            <td class="left"><strong>Data Ora Lansare</strong></td>
-                            <td class="normal">{lansare_date}</td>
+                            <td class="left"><strong>Data</strong></td>
+                            <td class="normal">________________</td>
                         </tr>
                         <tr>
-                            <td class="left"><strong>Data Ora Trimitere</strong></td>
-                            <td class="normal">{trimitere_date}</td>
+                            <td class="left"><strong>Ora</strong></td>
+                            <td class="normal">________________</td>
                         </tr>
                         <tr>
-                            <td class="left"><strong>Data Ora Sosire</strong></td>
-                            <td class="normal">{sosire_date}</td>
+                            <td class="left"><strong>Lansare</strong></td>
+                            <td class="normal">________________</td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Data</strong></td>
+                            <td class="normal">________________</td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Trimitere</strong></td>
+                            <td class="normal">________________</td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Data</strong></td>
+                            <td class="normal">________________</td>
+                        </tr>
+                        <tr>
+                            <td class="left"><strong>Sosire</strong></td>
+                            <td class="normal">{last_date_str}</td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Valoare Abonament</strong></td>
-                            <td class="normal"></td>
+                            <td class="normal">________________</td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Anunta</strong></td>
-                            <td class="normal"></td>
+                            <td class="normal">________________</td>
                         </tr>
                     </table>
                 </td>
             </tr>
         </table>
 
-        <!-- Defecte Constatate cu spațiu liber -->
+        <!-- Defecte constatate -->
         <br/>
         <div class="center" style="margin-bottom: 5px;">
             Defecte Constatate
@@ -211,13 +220,11 @@ def generate_html_report():
         <table border="1" width="100%">
             <tr>
                 <td width="30%" class="center"><strong>Defecte Constatate</strong></td>
-                <td width="70%" class="normal">
-                    {defect_lines}
-                </td>
+                <td width="70%" class="normal">{defect_lines}</td>
             </tr>
         </table>
 
-        <!-- Tip interventie / Rezultat / Cauza nerezolvarii -->
+        <!-- Tip interventie / Rezultat / Cauza nerezolvarii (variantă simplificată) -->
         <br/>
         <div class="center" style="margin-bottom: 5px;">
             Tip Interventie / Rezultat / Cauza Nerezolvarii
@@ -249,11 +256,11 @@ def generate_html_report():
                     <table border="0" width="100%">
                         <tr>
                             <td width="40%" class="left"><strong>Inginer Service</strong></td>
-                            <td width="60%" class="normal"></td>
+                            <td width="60%" class="normal">________________</td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Marca</strong></td>
-                            <td class="normal"></td>
+                            <td class="normal">________________</td>
                         </tr>
                     </table>
                 </td>
@@ -261,25 +268,27 @@ def generate_html_report():
                     <table border="0" width="100%">
                         <tr>
                             <td width="50%" class="left"><strong>Confirmare Client Nume</strong></td>
-                            <td width="50%" class="normal"></td>
+                            <td width="50%" class="normal">________________</td>
                         </tr>
                         <tr>
                             <td class="left"><strong>L.S.</strong></td>
-                            <td class="normal"></td>
+                            <td class="normal">________________</td>
                         </tr>
                     </table>
                 </td>
             </tr>
         </table>
 
-        <!-- Buton de print -->
+        <!-- Buton de print (dispare la tipărire) -->
         <button class="print-btn" onclick="window.print()">Print Report</button>
     </body>
     </html>
     """
     return html
 
-# Configurare pagină Streamlit
+# -----------------------------
+# Configurare pagină – ascunde meniuri, sidebar etc.
+# -----------------------------
 st.set_page_config(
     page_title="Raport de Service",
     layout="wide",
@@ -287,6 +296,8 @@ st.set_page_config(
     menu_items=None
 )
 
-# Afișare raport direct, fără alt text/butoane Streamlit
+# -----------------------------
+# Afișează DOAR raportul generat
+# -----------------------------
 report_html = generate_html_report()
 st.components.v1.html(report_html, height=900, scrolling=True)
