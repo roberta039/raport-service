@@ -117,7 +117,9 @@ def generate_html_report():
         <!-- Date firmă (sus, stânga) -->
         <div class="left">
             <strong>{COMPANY_NAME}</strong><br/>
-            {COMPANY_ADDRESS}
+            {COMPANY_ADDRESS_1}
+            {COMPANY_ADDRESS_2}
+            {COMPANY_ADDRESS_3}
         </div>
         <br/>
 
