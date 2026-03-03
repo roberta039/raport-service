@@ -214,7 +214,7 @@ def generate_html_report():
         <!-- Bloc Defecte Sesizate (același layout ca Defecte Constatate, dar gol) -->
         <br/>
         <div class="center" style="margin-bottom: 5px;">
-            Defecte Sesizate
+             
         </div>
         <table border="1" width="100%">
             <tr>
