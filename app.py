@@ -245,13 +245,13 @@ def generate_html_report():
         <br>
         <table border="1" width="100%">
             <tr>
-               <!-- Tabel cu 3 coloane: Tip Interventie, Rezultat, Cauza Nerezolvarii (3 corpuri) -->
+               <!-- Tabel cu 3 coloane: Tip Interventie, Rezultat, Cauza Nerezolvarii (fără linii duble) -->
 <br>
-<table border="1" width="100%">
+<table border="1" style="border-collapse: collapse; width: 100%; border-width: 1px; border-color: #000; border-spacing: 0;">
     <tr>
         <!-- Corp stânga: Tip Interventie -->
-        <td width="33%" style="vertical-align: top; padding: 0; margin: 0;">
-            <table border="1" width="100%">
+        <td width="33%" style="vertical-align: top; padding: 4px;">
+            <table border="0" width="100%" style="border-collapse: collapse; width: 100%;">
                 <tr>
                     <th class="center">Tip Interventie</th>
                 </tr>
@@ -269,8 +269,8 @@ def generate_html_report():
         </td>
 
         <!-- Corp mijloc: Rezultat -->
-        <td width="33%" style="vertical-align: top; padding: 0; margin: 0;">
-            <table border="1" width="100%">
+        <td width="33%" style="vertical-align: top; padding: 4px;">
+            <table border="0" width="100%" style="border-collapse: collapse; width: 100%;">
                 <tr>
                     <th class="center">Rezultat</th>
                 </tr>
@@ -285,8 +285,8 @@ def generate_html_report():
         </td>
 
         <!-- Corp dreapta: Cauza Nerezolvarii -->
-        <td width="33%" style="vertical-align: top; padding: 0; margin: 0;">
-            <table border="1" width="100%">
+        <td width="33%" style="vertical-align: top; padding: 4px;">
+            <table border="0" width="100%" style="border-collapse: collapse; width: 100%;">
                 <tr>
                     <th class="center">Cauza Nerezolvarii</th>
                 </tr>
