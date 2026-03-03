@@ -2,64 +2,77 @@ import streamlit as st
 import datetime
 import calendar
 import random
-from typing import List
-from fpdf import FPDF
 
-# -------------------------
-# Funcții de dată
-# -------------------------
-def working_days_of_month(year: int, month: int) -> List[datetime.date]:
+# ------------------------------------------------------------
+# 1. Funcții helper – date & zile lucrătoare random
+# ------------------------------------------------------------
+ROMANIAN_MONTHS = {
+    1: "Ianuarie",
+    2: "Februarie",
+    3: "Martie",
+    4: "Aprilie",
+    5: "Mai",
+    6: "Iunie",
+    7: "Iulie",
+    8: "August",
+    9: "Septembrie",
+    10: "Octombrie",
+    11: "Noiembrie",
+    12: "Decembrie"
+}
+
+def working_days_of_month(year: int, month: int) -> list[datetime.date]:
+    """Returnează lista de zile lucrătoare (luni–vineri) pentru o lună/an."""
     days = []
-    num_days = calendar.monthrange(year, month)[1]
-    for d in range(1, num_days + 1):
-        date_obj = datetime.date(year, month, d)
-        if date_obj.weekday() < 5:  # luni–vineri
-            days.append(date_obj)
+    for day in range(1, calendar.monthrange(year, month)[1] + 1):
+        dt = datetime.date(year, month, day)
+        if dt.weekday() < 5:  # 0–4 = luni–vineri
+            days.append(dt)
     return days
 
-def random_working_days(days: List[datetime.date], max_count: int = 4) -> List[datetime.date]:
+def random_working_days(days: list[datetime.date], max_count: int = 4) -> list[datetime.date]:
+    """Alege până la max_count zile lucrătoare random și le sortează."""
     if len(days) <= max_count:
         return sorted(days)
     return sorted(random.sample(days, max_count))
 
-# -------------------------
-# HTML pentru raport
-# -------------------------
-def generate_html(
-    client_name: str,
-    client_city: str,
-    client_street: str,
+# ------------------------------------------------------------
+# 2. Generare HTML raport
+# ------------------------------------------------------------
+def generate_html_report(
     company_name: str,
     company_address: str,
+    client_name: str,
+    client_street: str,
+    client_city: str,
+    selected_interventions: list[str],
     report_month_year: str,
-    report_dates: List[datetime.date],
-    selected_interventions: List[str],
+    report_dates: list[datetime.date],
+    last_date_str: str
 ):
-    # Liniile pentru „Defecte constatate”
+    # Linii „Defecte constatate” – câte un rând pentru fiecare zi aleasă
     defect_lines = "<br>".join(
         f"{d.day:02d}/{d.month:02d}/{d.year} - Verificare si intretinere retea de calculatoare."
         for d in report_dates
     )
 
-    # tipuri de intervenție – adaptate după model
+    # Tabel simplificat „Tip intervenție / Rezultat / Cauza”
     interventions = [
         "Garantie", "Constatare", "Revizie", "Instalare", "Reinstalare",
         "Mutare", "Incasare", "Rutina", "Programare", "Reprogramare"
     ]
-
-    intervention_rows = ""
+    rows = ""
     for it in interventions:
-        checkbox = "☑" if it in selected_interventions else "□"
-        result = "Rezolvata"  # poți ulterior să faci acest câmp dinamic
-        intervention_rows += f"""
+        checked = "☑" if it in selected_interventions else "□"
+        result = "Rezolvata" if it in selected_interventions else ""
+        cause = "Lipsa componente" if it not in selected_interventions else ""
+        rows += f"""
         <tr>
             <td width="40%">{it}</td>
-            <td width="20%" align="center">{checkbox}</td>
-            <td width="40%" align="center">{result}</td>
+            <td width="20%" align="center">{checked}</td>
+            <td width="40%" align="center">{result or cause}</td>
         </tr>
         """
-
-    last_date = report_dates[-1]
 
     html = f"""
     <!DOCTYPE html>
@@ -67,201 +80,226 @@ def generate_html(
     <head>
     <meta charset="UTF-8">
     <style>
-        body {{ font-family: Arial, sans-serif; margin: 20px; }}
-        .left {{ text-align: left; }}
-        .center {{ text-align: center; font-weight: bold; font-size: 18pt; }}
-        table {{ border-collapse: collapse; width: 100%; }}
-        th, td {{ border: 1px solid #000; padding: 4px; font-size: 10pt; }}
-        h3 {{ margin-top: 16px; margin-bottom: 8px; }}
+        body {{
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            font-size: 10pt;
+        }}
+        .center {{ text-align: center; }}
+        .left   {{ text-align: left; }}
+        table {{
+            border-collapse: collapse;
+            width: 100%;
+        }}
+        th, td {{
+            border: 1px solid black;
+            padding: 4px;
+        }}
+        .print-btn {{
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }}
+        @media print {{
+            .print-btn {{ display: none; }}
+            body {{
+                margin: 0;
+                padding: 0;
+            }}
+        }}
     </style>
     </head>
     <body>
-        <div class="left">
-            <strong>{company_name}</strong><br/>
-            {company_address}
-        </div>
-        <br/>
-        <div class="center">SESIZARE/RAPORT DE SERVICE</div>
-        <br/>
 
-        <!-- 2 corpuri sub titlu -->
-        <table>
-            <tr>
-                <td width="50%">
-                    <strong>Produs</strong><br/>
-                    Revizie<br/><br/>
+    <!-- Date firmă – aliniate la stânga -->
+    <div class="left">
+        <strong>{company_name}</strong><br/>
+        {company_address}
+    </div>
 
-                    <strong>Beneficiar</strong><br/>
-                    {client_name}<br/><br/>
+    <h1 class="center">SESIZARE/RAPORT DE SERVICE</h1>
 
-                    <strong>Adresa</strong><br/>
-                    {client_street}<br/><br/>
+    <!-- 2 corpuri sub titlu -->
+    <table>
+        <tr>
+            <td width="50%">
+                <strong>Produs</strong><br/>
+                Revizie<br/><br/>
 
-                    <strong>Localitate</strong><br/>
-                    {client_city}<br/><br/>
+                <strong>Beneficiar</strong><br/>
+                {client_name}<br/><br/>
 
-                    <strong>Telefon</strong><br/>
-                    ______________________<br/><br/>
+                <strong>Eticheta / Serie</strong><br/>
+                {client_name}<br/><br/>
 
-                    <strong>NrContr.</strong><br/>
-                    ______________________<br/><br/>
+                <strong>Adresa</strong><br/>
+                {client_street}<br/><br/>
 
-                    <strong>Defecte sesizate</strong><br/>
-                    ____________________________________________<br/>
-                    ____________________________________________<br/>
-                </td>
-                <td width="50%">
-                    <strong>Luna</strong><br/>
-                    {report_month_year}<br/><br/>
+                <strong>Localitate</strong><br/>
+                {client_city}<br/><br/>
 
-                    <strong>Data</strong><br/>
-                    {last_date.day:02d}/{last_date.month:02d}/{last_date.year}<br/><br/>
+                <strong>Telefon</strong><br/>
+                ________________<br/><br/>
 
-                    <strong>Ora</strong><br/>
-                    __________<br/><br/>
+                <strong>NrContr.</strong><br/>
+                ________________<br/><br/>
 
-                    <strong>Lansare</strong><br/>
-                    __________<br/><br/>
+                <strong>Defecte sesizate</strong><br/>
+                ___________________________<br/>
+                ___________________________<br/>
+            </td>
+            <td width="50%">
+                <strong>Luna</strong><br/>
+                {report_month_year}<br/><br/>
 
-                    <strong>Trimitere</strong><br/>
-                    __________<br/><br/>
+                <strong>Data</strong><br/>
+                {last_date_str}<br/><br/>
 
-                    <strong>Sosire</strong><br/>
-                    {last_date.day:02d}/{last_date.month:02d}/{last_date.year}<br/><br/>
+                <strong>Ora</strong><br/>
+                ________________<br/><br/>
 
-                    <strong>Valoare Abonament</strong><br/>
-                    __________<br/><br/>
+                <strong>Lansare</strong><br/>
+                ________________<br/><br/>
 
-                    <strong>Anunta</strong><br/>
-                    __________<br/><br/>
-                </td>
-            </tr>
-        </table>
+                <strong>Trimitere</strong><br/>
+                ________________<br/><br/>
 
-        <!-- Defecte constatate -->
-        <h3 style="text-align:center;">Defecte constatate</h3>
-        <table>
-            <tr>
-                <td width="30%"><strong>Defecte Constatate</strong></td>
-                <td width="70%">{defect_lines}</td>
-            </tr>
-        </table>
+                <strong>Sosire</strong><br/>
+                {last_date_str}<br/><br/>
 
-        <!-- Tip interventie / Rezultat / Cauza nerezolvarii (simplificat) -->
-        <h3 style="text-align:center;">Tip interventie / Rezultat / Cauza nerezolvarii</h3>
-        <table>
-            <tr>
-                <th width="40%">Tip interventie</th>
-                <th width="20%">Selectat</th>
-                <th width="40%">Rezultat</th>
-            </tr>
-            {intervention_rows}
-        </table>
+                <strong>Valoare Abonament</strong><br/>
+                ________________<br/><br/>
 
-        <!-- Inginer service / Confirmare client -->
-        <br/>
-        <table>
-            <tr>
-                <td width="50%">
-                    <strong>Inginer service</strong><br/>
-                    ___________________________<br/><br/>
-                    <strong>Marca</strong><br/>
-                    ___________________________
-                </td>
-                <td width="50%">
-                    <strong>Confirmare client nume</strong><br/>
-                    ___________________________<br/><br/>
-                    <strong>L.S.</strong><br/>
-                    ___________________________
-                </td>
-            </tr>
-        </table>
+                <strong>Anunta</strong><br/>
+                ________________<br/>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Defecte constatate -->
+    <h2 class="center">Defecte constatate</h2>
+    <table>
+        <tr>
+            <td width="100%">
+                {defect_lines}
+            </td>
+        </tr>
+    </table>
+
+    <!-- Tip interventie / Rezultat / Cauza nerezolvarii -->
+    <h2 class="center">Tip interventie / Rezultat / Cauza nerezolvarii</h2>
+    <table>
+        <tr>
+            <th width="40%">Tip interventie</th>
+            <th width="20%">Selectat</th>
+            <th width="40%">Rezultat / Cauza</th>
+        </tr>
+        {rows}
+    </table>
+
+    <!-- Inginer service / Confirmare client -->
+    <table>
+        <tr>
+            <td width="50%">
+                <strong>Inginer service</strong><br/>
+                ________________<br/><br/>
+
+                <strong>Marca</strong><br/>
+                ________________
+            </td>
+            <td width="50%">
+                <strong>Confirmare client nume</strong><br/>
+                ________________<br/><br/>
+
+                <strong>L.S.</strong><br/>
+                ________________
+            </td>
+        </tr>
+    </table>
+
+    <!-- Buton de print în HTML (va dispărea la tipărire) -->
+    <button class="print-btn" onclick="window.print()">Print Report</button>
 
     </body>
     </html>
     """
     return html
 
-# -------------------------
-# HTML -> PDF
-# -------------------------
-def html_to_pdf(html_content: str) -> bytes:
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_auto_page_break(auto=True, margin=15)
-    pdf.write_html(html_content)
-    # returnează bytes ai fișierului PDF
-    return pdf.output(dest="S").encode("latin1")
+# ------------------------------------------------------------
+# 3. UI Streamlit
+# ------------------------------------------------------------
+st.title("Raport de Service – Pagina web (fără PDF)")
 
-# -------------------------
-# Interfața Streamlit
-# -------------------------
-st.title("Generator Raport de Service")
-
-st.write("Aplicație gratuită (GitHub + Streamlit) pentru generarea Raportului de Service.")
+st.write(
+    "Aplicația generează raportul direct în pagină ca HTML. "
+    "Poți tipări din browser sau cu butonul de print."
+)
 
 with st.form("report_form"):
     # Date firmă
     company_name = st.text_input(
-        "Denumire firmă (apar sus, stânga)",
+        "Denumire firmă (sus stânga)",
         value="S.C. CREATIVE WEBDEV S.R.L."
     )
     company_address = st.text_input(
-        "Adresă firmă (linia de sub denumire)",
+        "Adresă firmă",
         value="SOSEAUA GIURGIULUI NR. 113-115, BL. O, SC. 1, ET. 2, AP.10, SECTOR 4, BUCURESTI - Romania"
     )
 
-    # Date client
+    # Beneficiar
     client_name = st.text_input("Beneficiar", value="SC Inkorporate SRL")
     client_street = st.text_input("Adresă beneficiar", value="Str. Esarfei 64-66")
-    client_city = st.text_input("Localitate beneficiar", value="Bucuresti")
+    client_city = st.text_input("Localitate", value="Bucuresti")
 
-    # Intervenții posibile (bife)
+    # Tipuri de intervenție
     interventions_options = [
         "Garantie", "Constatare", "Revizie", "Instalare", "Reinstalare",
         "Mutare", "Incasare", "Rutina", "Programare", "Reprogramare"
     ]
     selected_interventions = st.multiselect(
-        "Selectează tipurile de intervenție efectuate:",
+        "Selectează tipurile de intervenţie efectuate",
         options=interventions_options,
         default=["Revizie"]
     )
 
-    submitted = st.form_submit_button("Generează raport")
+    submitted = st.form_submit_button("Generează raportul")
 
 if submitted:
-    # luna trecută
+    # Luna trecută
     today = datetime.date.today()
-    last_month_date = today.replace(day=1) - datetime.timedelta(days=1)
-    year, month = last_month_date.year, last_month_date.month
+    first_day_this_month = today.replace(day=1)
+    last_month_date = first_day_this_month - datetime.timedelta(days=1)
+    year = last_month_date.year
+    month = last_month_date.month
+    report_month_year = f"{ROMANIAN_MONTHS[month]} {year}"
 
-    work_days = working_days_of_month(year, month)
-    chosen_days = random_working_days(work_days, max_count=4)
+    # Zile lucrătoare & selecție random (max 4)
+    working_days = working_days_of_month(year, month)
+    chosen_days = random_working_days(working_days, max_count=4)
 
-    # „Februarie 2026” etc.
-    # .capitalize() pentru prima literă mare la denumirea lunii (în engleză implicit, dar poți forța manual în română)
-    report_month_year = last_month_date.strftime("%B %Y")
+    last_date_str = chosen_days[-1].strftime("%d/%m/%Y")
 
-    st.write("Zilele alese pentru raport (zile lucrătoare, max 4):")
-    st.write(", ".join(d.strftime("%d/%m/%Y") for d in chosen_days))
-
-    html = generate_html(
-        client_name=client_name,
-        client_city=client_city,
-        client_street=client_street,
+    # Generează HTML raport
+    html_report = generate_html_report(
         company_name=company_name,
         company_address=company_address,
+        client_name=client_name,
+        client_street=client_street,
+        client_city=client_city,
+        selected_interventions=selected_interventions,
         report_month_year=report_month_year,
         report_dates=chosen_days,
-        selected_interventions=selected_interventions,
+        last_date_str=last_date_str
     )
 
-    pdf_bytes = html_to_pdf(html)
-    last_date_str = chosen_days[-1].strftime("%Y%m%d")
+    # Afișează raportul ca pagină HTML în Streamlit
+    st.components.v1.html(html_report, height=900, scrolling=True)
 
-    st.download_button(
-        label="Descarcă raport PDF",
-        data=pdf_bytes,
-        file_name=f"Raport_Service_{last_date_str}.pdf",
-        mime="application/pdf"
+    st.info(
+        "Raportul este generat ca pagină web. "
+        "Poți folosi butonul 'Print Report' din raport sau comanda Ctrl+P din browser pentru tipărire."
     )
