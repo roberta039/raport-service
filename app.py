@@ -9,10 +9,11 @@ ROMANIAN_MONTHS = {
     7: "Iulie", 8: "August", 9: "Septembrie", 10: "Octombrie", 11: "Noiembrie", 12: "Decembrie"
 }
 
+# Adresa pe 3 rânduri separate (folosim <br> pentru trecerea pe rând nou)
 COMPANY_NAME = "S.C. CREATIVE WEBDEV S.R.L."
 COMPANY_ADDRESS = (
-    "SOSEAUA GIURGIULUI NR. 113-115,"
-    "BL. O, SC. 1, ET. 2, AP.10, "
+    "SOSEAUA GIURGIULUI NR. 113-115<br>"
+    "BL. O, SC. 1, ET. 2, AP.10<br>"
     "SECTOR 4, BUCURESTI - Romania"
 )
 CLIENT_NAME = "SC Inkorporate SRL"
@@ -121,10 +122,10 @@ def generate_html_report():
     <body>
         <!-- Date firmă (sus, stânga) -->
         <div class="left">
-            <strong>{COMPANY_NAME}</strong><br/>
+            <strong>{COMPANY_NAME}</strong><br>
             {COMPANY_ADDRESS}
         </div>
-        <br/>
+        <br>
 
         <!-- Titlu -->
         <div class="center" style="font-size: 18pt; margin-bottom: 10px;">
@@ -213,9 +214,9 @@ def generate_html_report():
         </table>
 
         <!-- Bloc Defecte Sesizate (același layout ca Defecte Constatate, dar gol) -->
-        <br/>
+        <br>
         <div class="center" style="margin-bottom: 5px;">
-             
+            Defecte Sesizate
         </div>
         <table border="1" width="100%">
             <tr>
@@ -227,9 +228,9 @@ def generate_html_report():
         </table>
 
         <!-- Bloc Defecte Constatate cu date + spațiu liber -->
-        <br/>
+        <br>
         <div class="center" style="margin-bottom: 5px;">
-             
+            Defecte Constatate
         </div>
         <table border="1" width="100%">
             <tr>
@@ -241,7 +242,7 @@ def generate_html_report():
         </table>
 
         <!-- Tip interventie / Rezultat / Cauza nerezolvarii -->
-        <br/>
+        <br>
         <div class="center" style="margin-bottom: 5px;">
             Tip Interventie / Rezultat / Cauza Nerezolvarii
         </div>
@@ -265,7 +266,7 @@ def generate_html_report():
         </table>
 
         <!-- Inginer service / Confirmare client -->
-        <br/>
+        <br>
         <table>
             <tr>
                 <td width="50%" style="vertical-align: top;">
