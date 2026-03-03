@@ -58,8 +58,11 @@ def generate_html_report():
     for d in chosen_days:
         defect_lines += f"{d.day:02d}/{d.month:02d}/{d.year} - Verificare si intretinere retea de calculatoare.<br>"
 
-    # Spațiu suplimentar pentru completare manuală
-    defect_lines += "<br>" * 15  # ajustează numărul dacă vrei mai mult/mai puțin spațiu
+    # Spațiu suplimentar pentru completare manuală la "Defecte constatate"
+    defect_lines += "<br>" * 15
+
+    # Spațiu pentru blocul "Defecte Sesizate"
+    defect_sesizate_space = "<br>" * 8  # poți mări sau micșora numărul
 
     html = f"""
     <!DOCTYPE html>
@@ -166,10 +169,6 @@ def generate_html_report():
                             <td class="left"><strong>Nr Contr.</strong></td>
                             <td class="normal">________________</td>
                         </tr>
-                        <tr>
-                            <td class="left"><strong>Defecte Sesizate</strong></td>
-                            <td class="normal"></td>
-                        </tr>
                     </table>
                 </td>
                 <td width="50%" style="vertical-align: top;">
@@ -199,6 +198,19 @@ def generate_html_report():
                             <td class="normal">________________</td>
                         </tr>
                     </table>
+                </td>
+            </tr>
+        </table>
+
+        <!-- Bloc Defecte Sesizate -->
+        <br/>
+        <div class="center" style="margin-bottom: 5px;">
+            Defecte Sesizate
+        </div>
+        <table border="1" width="100%">
+            <tr>
+                <td width="100%" class="normal">
+                    {defect_sesizate_space}
                 </td>
             </tr>
         </table>
