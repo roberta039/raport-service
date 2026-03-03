@@ -12,8 +12,8 @@ ROMANIAN_MONTHS = {
 # Adresa pe 3 rânduri separate (folosim <br> pentru trecerea pe rând nou)
 COMPANY_NAME = "S.C. CREATIVE WEBDEV S.R.L."
 COMPANY_ADDRESS = (
-    "SOSEAUA GIURGIULUI NR. 113-115<br>"
-    "BL. O, SC. 1, ET. 2, AP.10, SECTOR 4, BUCURESTI - Romania"
+    "SOSEAUA GIURGIULUI NR. 113-115, BL. O, SC. 1, ET. 2, AP.10,<br>"
+    "SECTOR 4, BUCURESTI - Romania"
 )
 CLIENT_NAME = "SC Inkorporate SRL"
 CLIENT_STREET = "Str. Esarfei 64-66"
