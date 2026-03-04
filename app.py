@@ -3,13 +3,12 @@ import datetime
 import calendar
 import random
 
-# Configurări fixe
+# CONFIGURĂRI FIXE
 ROMANIAN_MONTHS = {
     1: "Ianuarie", 2: "Februarie", 3: "Martie", 4: "Aprilie", 5: "Mai", 6: "Iunie",
     7: "Iulie", 8: "August", 9: "Septembrie", 10: "Octombrie", 11: "Noiembrie", 12: "Decembrie"
 }
 
-# Adresa pe 3 rânduri separate (folosim <br> pentru trecerea pe rând nou)
 COMPANY_NAME = "S.C. CREATIVE WEBDEV S.R.L."
 COMPANY_ADDRESS = (
     "SOSEAUA GIURGIULUI NR. 113-115<br>"
@@ -19,6 +18,24 @@ COMPANY_ADDRESS = (
 CLIENT_NAME = "SC Inkorporate S.R.L."
 CLIENT_STREET = "Str. Esarfei 64-66"
 CLIENT_CITY = "Bucuresti"
+
+# Opțiuni pentru blocurile cu bife
+TIP_INTERVENTIE_OPTIONS = [
+    "Garantie", "Constatare", "Revizie", "Instalare", "Reinstalare",
+    "Mutare", "Incasare", "Rutina", "Programare", "Reprogramare"
+]
+
+RESULT_OPTIONS = [
+    "Rezolvata", "Rezolvata Partial", "Nerezolvata",
+    "Preluare Echipament", "Fara Accesorii",
+    "Cu Accesorii", "Furnizat echipament back‑up"
+]
+
+CAUZA_NERECOL_OPTIONS = [
+    "Lipsa Componente", "Insatisfactie Client", "Piese luate la reparat",
+    "Lipsa acces Produs", "Terminat Programul",
+    "Refuz Cumparare", "Linie Telefonica defecta"
+]
 
 
 # Funcții ajutătoare
@@ -39,11 +56,46 @@ def random_working_days(days, max_count=4):
     return sorted(random.sample(days, max_count))
 
 
-# Generare raport HTML
-def generate_html_report():
-    """Generează raportul HTML conform modelului dorit."""
+def init_state():
+    """Inițializează valorile implicite în sesiune, dacă nu există deja."""
+    # câmpuri text generale
+    for key, default in {
+        "produs": "",
+        "beneficiar": CLIENT_NAME,
+        "serie": "",
+        "eticheta": "",
+        "telefon": "",
+        "fax": "",
+        "tip": "",
+        "nr_contr": "",
+        "data_ora_lansare": "",
+        "data_ora_trimitere": "",
+        "data_ora_sosire": "",
+        "valoare_abonament": "",
+        "anunta": ""
+    }.items():
+        if key not in st.session_state:
+            st.session_state[key] = default
 
-    # Luna trecută
+    # defecte sesizate/constatate (5 rânduri fiecare, editabile)
+    if "defect_sesizate" not in st.session_state:
+        st.session_state.defect_sesizate = [""] * 5
+    if "defect_constatate" not in st.session_state:
+        st.session_state.defect_constatate = [""] * 5
+
+    # bife
+    if "tip_interventie" not in st.session_state:
+        st.session_state.tip_interventie = {opt: False for opt in TIP_INTERVENTIE_OPTIONS}
+    if "rezultat" not in st.session_state:
+        st.session_state.rezultat = {opt: False for opt in RESULT_OPTIONS}
+    if "cauza_nerezolvarii" not in st.session_state:
+        st.session_state.cauza_nerezolvarii = {opt: False for opt in CAUZA_NERECOL_OPTIONS}
+
+
+def generate_html_report():
+    """Generează HTML‑ul raportului, folosind valorile completate în UI."""
+
+    # Luna trecută (pentru câmpul "Luna")
     today = datetime.date.today()
     first_day_this_month = today.replace(day=1)
     last_month_date = first_day_this_month - datetime.timedelta(days=1)
@@ -51,26 +103,37 @@ def generate_html_report():
     month = last_month_date.month
     report_month_year = f"{ROMANIAN_MONTHS[month]} {year}"
 
-    # Zile lucrătoare alese aleator (max 4)
+    # Zile lucrătoare + una pentru Data Ora Sosire (doar ca fallback)
     working_days = working_days_of_month(year, month)
     chosen_days = random_working_days(working_days, max_count=4)
+    sosire_date_auto = chosen_days[-1].strftime("%d/%m/%Y") if chosen_days else ""
 
-    # Data Ora Sosire = ultima zi aleasă (ora se completează manual)
-    sosire_date = chosen_days[-1].strftime("%d/%m/%Y")
+    # Dacă Data Ora Sosire nu e completată manual, folosim data automată
+    data_ora_sosire_final = st.session_state.data_ora_sosire or sosire_date_auto
 
-    # Blocul "Defecte Constatate" – rând pentru fiecare zi
-    defect_lines = ""
-    for d in chosen_days:
-        defect_lines += (
-            f"{d.day:02d}/{d.month:02d}/{d.year} - "
-            f"Verificare si intretinere retea de calculatoare.<br>"
-        )
+    # Construim listele de defecte
+    defect_sesizate_html = "<br>".join(
+        f"{i+1}. {txt}" for i, txt in enumerate(st.session_state.defect_sesizate) if txt.strip()
+    )
+    defect_constatate_html = "<br>".join(
+        f"{i+1}. {txt}" for i, txt in enumerate(st.session_state.defect_constatate) if txt.strip()
+    )
 
-    # Spațiu suplimentar pentru completare manuală la "Defecte Constatate"
-    defect_lines += "<br>" * 15
+    # Construim rândurile pentru cele 3 blocuri cu bife (HTML <input type="checkbox">)
+    tip_interventie_rows = ""
+    for opt in TIP_INTERVENTIE_OPTIONS:
+        checked = "checked" if st.session_state.tip_interventie[opt] else ""
+        tip_interventie_rows += f'<tr><td><input type="checkbox" {checked}> {opt}</td></tr>'
 
-    # Spațiu pentru blocul "Defecte Sesizate" (fără date pre‑completate)
-    defect_sesizate_space = "<br>" * 8
+    rezultat_rows = ""
+    for opt in RESULT_OPTIONS:
+        checked = "checked" if st.session_state.rezultat[opt] else ""
+        rezultat_rows += f'<tr><td><input type="checkbox" {checked}> {opt}</td></tr>'
+
+    cauza_rows = ""
+    for opt in CAUZA_NERECOL_OPTIONS:
+        checked = "checked" if st.session_state.cauza_nerezolvarii[opt] else ""
+        cauza_rows += f'<tr><td><input type="checkbox" {checked}> {opt}</td></tr>'
 
     html = f"""
     <!DOCTYPE html>
@@ -101,6 +164,12 @@ def generate_html_report():
             border: 1px solid black;
             padding: 4px;
         }}
+        /* Spațiere mărită în chenarul dublu */
+        .table-double th,
+        .table-double td {{
+            padding: 10px 4px;
+            line-height: 1.6;
+        }}
         .print-btn {{
             background-color: #4CAF50;
             color: white;
@@ -110,12 +179,12 @@ def generate_html_report():
             font-size: 16px;
             margin-top: 20px;
         }}
-        /* Stil special pentru print pe A4 */
+        /* Stil pentru printare A4 */
         @media print {{
             body {{
                 margin: 0;
                 padding: 0;
-                font-size: 9pt;   /* puțin mai mic, să încapă sigur pe A4 */
+                font-size: 9pt;
             }}
             @page {{
                 size: A4;
@@ -126,12 +195,13 @@ def generate_html_report():
             }}
             table {{
                 max-width: 100%;
+                page-break-inside: avoid;
             }}
         }}
     </style>
     </head>
     <body>
-        <!-- Date firmă (sus, stânga) -->
+        <!-- Date firmă -->
         <div class="left">
             <strong>{COMPANY_NAME}</strong><br>
             {COMPANY_ADDRESS}
@@ -146,24 +216,24 @@ def generate_html_report():
         <!-- Tabel principal 2 coloane -->
         <table>
             <tr>
-                <!-- Coloana stânga: date beneficiar / produs -->
+                <!-- Stânga: date beneficiar / produs -->
                 <td width="50%" style="vertical-align: top;">
                     <table border="0" width="100%">
                         <tr>
                             <td width="30%" class="left"><strong>Produs</strong></td>
-                            <td width="70%" class="normal">Revizie</td>
+                            <td width="70%" class="normal">{st.session_state.produs}</td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Beneficiar</strong></td>
-                            <td class="normal">{CLIENT_NAME}</td>
+                            <td class="normal">{st.session_state.beneficiar}</td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Serie</strong></td>
-                            <td class="normal"></td>
+                            <td class="normal">{st.session_state.serie}</td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Eticheta</strong></td>
-                            <td class="normal"></td>
+                            <td class="normal">{st.session_state.eticheta}</td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Adresa</strong></td>
@@ -175,24 +245,24 @@ def generate_html_report():
                         </tr>
                         <tr>
                             <td class="left"><strong>Telefon</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal">{st.session_state.telefon}</td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Fax</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal">{st.session_state.fax}</td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Tip</strong></td>
-                            <td class="normal"></td>
+                            <td class="normal">{st.session_state.tip}</td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Nr Contr.</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal">{st.session_state.nr_contr}</td>
                         </tr>
                     </table>
                 </td>
 
-                <!-- Coloana dreapta: luna, date/ora, abonament -->
+                <!-- Dreapta: lună + date/ora -->
                 <td width="50%" style="vertical-align: top;">
                     <table border="0" width="100%">
                         <tr>
@@ -201,115 +271,88 @@ def generate_html_report():
                         </tr>
                         <tr>
                             <td class="left"><strong>Data Ora Lansare</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal">{st.session_state.data_ora_lansare}</td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Data Ora Trimitere</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal">{st.session_state.data_ora_trimitere}</td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Data Ora Sosire</strong></td>
-                            <td class="normal">{sosire_date}</td>
+                            <td class="normal">{data_ora_sosire_final}</td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Valoare Abonament</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal">{st.session_state.valoare_abonament}</td>
                         </tr>
                         <tr>
                             <td class="left"><strong>Anunta</strong></td>
-                            <td class="normal">________________</td>
+                            <td class="normal">{st.session_state.anunta}</td>
                         </tr>
                     </table>
                 </td>
             </tr>
         </table>
 
-        <!-- Bloc Defecte Sesizate - CHENAR DUBLU -->
+        <!-- Bloc Defecte Sesizate (chenar dublu) -->
         <br>
         <div class="center" style="margin-bottom: 5px;">
             Defecte Sesizate
         </div>
-        <table border="2" width="100%" style="border: double;">
+        <table border="2" width="100%" style="border: double;" class="table-double">
             <tr>
                 <td width="30%" class="center"><strong>Defecte Sesizate</strong></td>
                 <td width="70%" class="normal">
-                    {defect_sesizate_space}
+                    {defect_sesizate_html}
                 </td>
             </tr>
         </table>
 
-        <!-- Bloc Defecte Constatate - CHENAR DUBLU -->
+        <!-- Bloc Defecte Constatate (chenar dublu) -->
         <br>
         <div class="center" style="margin-bottom: 5px;">
             Defecte Constatate
         </div>
-        <table border="2" width="100%" style="border: double;">
+        <table border="2" width="100%" style="border: double;" class="table-double">
             <tr>
                 <td width="30%" class="center"><strong>Defecte Constatate</strong></td>
                 <td width="70%" class="normal">
-                    {defect_lines}
+                    {defect_constatate_html}
                 </td>
             </tr>
         </table>
 
-        <!-- Tabel cu 3 coloane: Tip Interventie, Rezultat, Cauza Nerezolvarii -->
+        <!-- 3 corpuri: Tip Interventie, Rezultat, Cauza Nerezolvarii -->
         <br>
         <table border="1" style="border-collapse: collapse; width: 100%; border-width: 1px; border-color: #000; border-spacing: 0;">
             <tr>
-                <!-- Corp stânga: Tip Interventie -->
+                <!-- Stânga: Tip Interventie -->
                 <td width="33%" style="vertical-align: top; padding: 4px;">
                     <table border="0" width="100%">
-                        <tr>
-                            <th class="center">Tip Interventie</th>
-                        </tr>
-                        <tr><td>☐ Garantie</td></tr>
-                        <tr><td>☐ Constatare</td></tr>
-                        <tr><td>☐ Revizie</td></tr>
-                        <tr><td>☐ Instalare</td></tr>
-                        <tr><td>☐ Reinstalare</td></tr>
-                        <tr><td>☐ Mutare</td></tr>
-                        <tr><td>☐ Incasare</td></tr>
-                        <tr><td>☐ Rutina</td></tr>
-                        <tr><td>☐ Programare</td></tr>
-                        <tr><td>☐ Reprogramare</td></tr>
+                        <tr><th class="center">Tip Interventie</th></tr>
+                        {tip_interventie_rows}
                     </table>
                 </td>
 
-                <!-- Corp mijloc: Rezultat -->
+                <!-- Mijloc: Rezultat -->
                 <td width="33%" style="vertical-align: top; padding: 4px;">
                     <table border="0" width="100%">
-                        <tr>
-                            <th class="center">Rezultat</th>
-                        </tr>
-                        <tr><td>☐ Rezolvata</td></tr>
-                        <tr><td>☐ Rezolvata Partial</td></tr>
-                        <tr><td>☐ Nerezolvata</td></tr>
-                        <tr><td>☐ Preluare Echipament</td></tr>
-                        <tr><td>☐ Fara Accesorii</td></tr>
-                        <tr><td>☐ Cu Accesorii</td></tr>
-                        <tr><td>☐ Furnizat echipament back-up</td></tr>
+                        <tr><th class="center">Rezultat</th></tr>
+                        {rezultat_rows}
                     </table>
                 </td>
 
-                <!-- Corp dreapta: Cauza Nerezolvarii -->
+                <!-- Dreapta: Cauza Nerezolvarii -->
                 <td width="33%" style="vertical-align: top; padding: 4px;">
                     <table border="0" width="100%">
-                        <tr>
-                            <th class="center">Cauza Nerezolvarii</th>
-                        </tr>
-                        <tr><td>☐ Lipsa Componente</td></tr>
-                        <tr><td>☐ Insatisfactie Client</td></tr>
-                        <tr><td>☐ Piese luate la reparat</td></tr>
-                        <tr><td>☐ Lipsa acces Produs</td></tr>
-                        <tr><td>☐ Terminat Programul</td></tr>
-                        <tr><td>☐ Refuz Cumparare</td></tr>
-                        <tr><td>☐ Linie Telefonica defecta</td></tr>
+                        <tr><th class="center">Cauza Nerezolvarii</th></tr>
+                        {cauza_rows}
                     </table>
                 </td>
             </tr>
         </table>
 
-        <!-- Corp mic pentru Model/Obs. și S/N -->
+        <!-- Model/Obs și S/N -->
         <br>
         <div style="text-align: left;">
             Model/Obs.: ___________<br>
@@ -347,7 +390,7 @@ def generate_html_report():
             </tr>
         </table>
 
-        <!-- Buton de print -->
+        <!-- Buton print -->
         <button class="print-btn" onclick="window.print()">Print Report</button>
     </body>
     </html>
@@ -355,7 +398,7 @@ def generate_html_report():
     return html
 
 
-# Configurare pagină Streamlit
+# CONFIGURARE PAGINĂ STREAMLIT
 st.set_page_config(
     page_title="Raport de Service",
     layout="wide",
@@ -363,6 +406,71 @@ st.set_page_config(
     menu_items=None,
 )
 
-# Afișare raport direct, fără alt text/butoane Streamlit
-report_html = generate_html_report()
-st.components.v1.html(report_html, height=1600, scrolling=True)
+# Inițializare state
+init_state()
+
+# UI DE EDITARE
+st.header("Date generale")
+
+col1, col2 = st.columns(2)
+with col1:
+    st.session_state.produs = st.text_input("Produs", value=st.session_state.produs)
+    st.session_state.beneficiar = st.text_input("Beneficiar", value=st.session_state.beneficiar)
+    st.session_state.serie = st.text_input("Serie", value=st.session_state.serie)
+    st.session_state.eticheta = st.text_input("Eticheta", value=st.session_state.eticheta)
+    st.session_state.telefon = st.text_input("Telefon", value=st.session_state.telefon)
+    st.session_state.fax = st.text_input("Fax", value=st.session_state.fax)
+    st.session_state.tip = st.text_input("Tip", value=st.session_state.tip)
+    st.session_state.nr_contr = st.text_input("Nr Contr.", value=st.session_state.nr_contr)
+
+with col2:
+    st.session_state.data_ora_lansare = st.text_input("Data Ora Lansare", value=st.session_state.data_ora_lansare)
+    st.session_state.data_ora_trimitere = st.text_input("Data Ora Trimitere", value=st.session_state.data_ora_trimitere)
+    st.session_state.data_ora_sosire = st.text_input("Data Ora Sosire", value=st.session_state.data_ora_sosire)
+    st.session_state.valoare_abonament = st.text_input("Valoare Abonament", value=st.session_state.valoare_abonament)
+    st.session_state.anunta = st.text_input("Anunta", value=st.session_state.anunta)
+
+# Defecte Sesizate
+st.subheader("Defecte Sesizate")
+for i in range(5):
+    st.session_state.defect_sesizate[i] = st.text_input(
+        f"Defect sesizat {i+1}",
+        value=st.session_state.defect_sesizate[i]
+    )
+
+# Defecte Constatate
+st.subheader("Defecte Constatate")
+for i in range(5):
+    st.session_state.defect_constatate[i] = st.text_input(
+        f"Defect constatat {i+1}",
+        value=st.session_state.defect_constatate[i]
+    )
+
+# Tip Interventie
+st.subheader("Tip Interventie")
+for opt in TIP_INTERVENTIE_OPTIONS:
+    st.session_state.tip_interventie[opt] = st.checkbox(
+        opt,
+        value=st.session_state.tip_interventie[opt]
+    )
+
+# Rezultat
+st.subheader("Rezultat")
+for opt in RESULT_OPTIONS:
+    st.session_state.rezultat[opt] = st.checkbox(
+        opt,
+        value=st.session_state.rezultat[opt]
+    )
+
+# Cauza Nerezolvarii
+st.subheader("Cauza Nerezolvarii")
+for opt in CAUZA_NERECOL_OPTIONS:
+    st.session_state.cauza_nerezolvarii[opt] = st.checkbox(
+        opt,
+        value=st.session_state.cauza_nerezolvarii[opt]
+    )
+
+# Generare & afișare raport
+if st.button("Generează raport"):
+    report_html = generate_html_report()
+    st.components.v1.html(report_html, height=1600, scrolling=True)
