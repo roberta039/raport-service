@@ -241,7 +241,7 @@ def generate_html_report():
         <!-- Bloc Defecte Constatate cu date + spațiu liber -->
         <br>
         <div class="center" style="margin-bottom: 5px;">
-            Defecte Constatate
+            
         </div>
         <table border="1" width="100%">
             <tr>
