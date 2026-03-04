@@ -227,7 +227,7 @@ def generate_html_report():
         <!-- Bloc Defecte Sesizate (gol) -->
         <br>
         <div class="center" style="margin-bottom: 5px;">
-            Defecte Sesizate
+            
         </div>
         <table border="1" width="100%">
             <tr>
